@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私密管理后台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+        }
+        .header {
+            background-color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            color: #1d2129;
+        }
+        .header-title svg {
+            width: 24px;
+            height: 24px;
+            color: #165dff;
+            margin-right: 8px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-refresh {
+            background-color: white;
+            color: #4e5969;
+            border: 1px solid #c9cdd4;
+        }
+        .btn-exit {
+            background-color: #ff4d4f;
+            color: white;
+        }
+        .content {
+            padding: 24px;
+        }
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 16px 24px;
+            text-align: left;
+            border-bottom: 1px solid #e5e6eb;
+        }
+        th {
+            background-color: #f5f7fa;
+            color: #4e5969;
+            font-weight: 500;
+        }
+        td {
+            color: #1d2129;
+        }
+        a {
+            color: #165dff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: #86909c;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 64a448 448 0 1 0 0 896 448 448 0 0 0 0-896zm0 832a384 384 0 1 1 0-768 384 384 0 0 1 0 768zm-96-384a96 96 0 1 1 192 0 96 96 0 0 1-192 0zm160 96a160 160 0 1 0-320 0c0 52.99 32.71 98.12 79.21 129.21C383.89 729.89 446.66 736 512 736s128.11-6.11 176.79-30.79C727.29 674.12 760 628.99 760 576a160 160 0 0 0-160-160z" fill="currentColor"/></svg>
+            私密管理后台
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-refresh" id="refreshBtn">
+                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M104.704 512c0-226.944 183.36-410.304 410.304-410.304 113.664 0 216.704 44.928 290.816 117.504l-49.664 49.664C699.392 183.808 610.176 144 515.008 144 303.744 144 136 311.744 136 523.008S303.744 902.016 515.008 902.016c166.4 0 309.248-106.496 362.496-256H624v-64h360v360h-64V647.04c-50.688 135.168-188.928 231.168-348.992 231.168-226.944 0-410.304-183.36-410.304-410.304z" fill="currentColor"/></svg>
+                刷新
+            </button>
+            <a href="index.html" class="btn btn-exit">
+                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M426.666667 768V256h170.666666v170.666667h213.333333v256H597.333333v170.666667z" fill="currentColor"/></svg>
+                退出
+            </a>
+        </div>
+    </div>
+    <div class="content">
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>链接</th>
+                        <th>提交时间</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                暂无提交数据
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function renderTable() {
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            const data = JSON.parse(localStorage.getItem('submissions')) || [];
+
+            if (data.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tableBody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td><a href="${item.link}" target="_blank">${item.link}</a></td>
+                    <td>${item.time}</td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', renderTable);
+        window.addEventListener('load', renderTable);
+    </script>
+</body>
+</html>
 
