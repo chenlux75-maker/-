@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .login-container {
+            background: white;
+            padding: 48px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-title {
+            text-align: center;
+            font-size: 28px;
+            color: #1d2129;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-title svg {
+            width: 28px;
+            height: 28px;
+            color: #165dff;
+            margin-right: 8px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-label {
+            display: block;
+            color: #1d2129;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #c9cdd4;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #1d2129;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #165dff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .error-tip {
+            color: #ff4d4f;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="login-title">
+            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 64a448 448 0 1 0 0 896 448 448 0 0 0 0-896zm0 832a384 384 0 1 1 0-768 384 384 0 0 1 0 768zm-96-384a96 96 0 1 1 192 0 96 96 0 0 1-192 0zm160 96a160 160 0 1 0-320 0c0 52.99 32.71 98.12 79.21 129.21C383.89 729.89 446.66 736 512 736s128.11-6.11 176.79-30.79C727.29 674.12 760 628.99 760 576a160 160 0 0 0-160-160z" fill="currentColor"/></svg>
+            管理员登录
+        </h1>
+        <div class="form-group">
+            <label class="form-label">管理员密码</label>
+            <input type="password" class="form-input" id="adminPwd" placeholder="请输入登录密码">
+            <div class="error-tip" id="errorTip">密码错误，请重新输入</div>
+        </div>
+        <button class="login-btn" id="loginBtn">登录</button>
+    </div>
+
+    <script>
+        // 自定义管理员密码（建议改成你自己的）
+        const ADMIN_PASSWORD = "123456"; 
+        // 登录成功后跳转的后台地址
+        const ADMIN_PAGE = "admin.html";
+
+        const loginBtn = document.getElementById('loginBtn');
+        const adminPwd = document.getElementById('adminPwd');
+        const errorTip = document.getElementById('errorTip');
+
+        loginBtn.addEventListener('click', function() {
+            const inputPwd = adminPwd.value.trim();
+            if (inputPwd === ADMIN_PASSWORD) {
+                // 登录成功，存储登录状态
+                localStorage.setItem('adminLogin', 'true');
+                window.location.href = ADMIN_PAGE;
+            } else {
+                errorTip.style.display = 'block';
+                // 3秒后隐藏错误提示
+                setTimeout(() => {
+                    errorTip.style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // 按回车也能登录
+        adminPwd.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
