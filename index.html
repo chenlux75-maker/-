@@ -99,12 +99,12 @@
         .divider::after {
             margin-left: 16px;
         }
-        .admin-link {
+        .loading {
+            display: none;
             text-align: center;
-            display: block;
             color: #165dff;
-            text-decoration: none;
-            font-size: 16px;
+            font-size: 14px;
+            margin-top: 8px;
         }
         .footer-text {
             text-align: center;
@@ -136,10 +136,8 @@
                 <input type="url" class="form-input" id="link" placeholder="请输入链接地址" required>
             </div>
             <button type="submit" class="submit-btn" id="submitBtn" disabled>提交</button>
+            <div class="loading" id="loading">正在提交，请稍候...</div>
         </form>
-
-        <div class="divider">或</div>
-        <a href="admin.html" class="admin-link">管理员入口</a>
 
         <div class="footer-text">
             您的信息将被安全地发送到后台<br>
@@ -148,11 +146,16 @@
     </div>
 
     <script>
+        // 替换成你的 SheetDB API 地址
+        const SHEETDB_API = "https://sheetdb.io/api/v1/i0flunpx03cv3";
+
         const nameInput = document.getElementById('name');
         const linkInput = document.getElementById('link');
         const submitBtn = document.getElementById('submitBtn');
         const form = document.getElementById('infoForm');
+        const loading = document.getElementById('loading');
 
+        // 检查输入框是否填写完整
         function checkInputs() {
             if (nameInput.value.trim() && linkInput.value.trim()) {
                 submitBtn.disabled = false;
@@ -166,7 +169,8 @@
         nameInput.addEventListener('input', checkInputs);
         linkInput.addEventListener('input', checkInputs);
 
-        form.addEventListener('submit', function(e) {
+        // 提交表单到云端
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const name = nameInput.value.trim();
             const link = linkInput.value.trim();
@@ -179,13 +183,38 @@
                 second: '2-digit'
             }).replace(/\//g, '-');
 
-            let data = JSON.parse(localStorage.getItem('submissions')) || [];
-            data.push({ name, link, time });
-            localStorage.setItem('submissions', JSON.stringify(data));
+            // 显示加载状态
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
 
-            window.location.href = 'success.html';
+            try {
+                // 发送数据到 SheetDB 云端
+                const response = await fetch(SHEETDB_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data: [{ name, link, time }]
+                    })
+                });
+
+                if (response.ok) {
+                    // 提交成功，跳转到成功页
+                    window.location.href = 'success.html';
+                } else {
+                    alert('提交失败，请重试！');
+                }
+            } catch (error) {
+                alert('网络错误，请检查网络后重试！');
+            } finally {
+                // 隐藏加载状态
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
         });
     </script>
 </body>
 </html>
+
 
