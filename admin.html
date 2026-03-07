@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>信息收集站</title>
+    <title>私密管理后台</title>
     <style>
         * {
             margin: 0;
@@ -13,178 +13,193 @@
         }
         body {
             background-color: #f5f7fa;
+        }
+        .header {
+            background-color: white;
+            padding: 16px 24px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 800px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 36px;
-            color: #1d2129;
-            margin-bottom: 12px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #4e5969;
-            font-size: 18px;
-            margin-bottom: 32px;
-        }
-        .form-group {
-            margin-bottom: 24px;
-        }
-        .form-label {
+        .header-title {
             display: flex;
             align-items: center;
+            font-size: 24px;
             color: #1d2129;
-            font-size: 18px;
-            margin-bottom: 8px;
         }
-        .form-label svg {
+        .header-title svg {
+            width: 24px;
+            height: 24px;
+            color: #165dff;
             margin-right: 8px;
-            width: 20px;
-            height: 20px;
         }
-        .form-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid #c9cdd4;
-            border-radius: 8px;
-            font-size: 16px;
-            color: #1d2129;
+        .header-actions {
+            display: flex;
+            gap: 12px;
         }
-        .form-input::placeholder {
-            color: #86909c;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background-color: #e5e6eb;
-            color: #c9cdd4;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: not-allowed;
-            margin-bottom: 24px;
-        }
-        .submit-btn.active {
-            background-color: #165dff;
-            color: white;
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
             cursor: pointer;
-        }
-        .divider {
+            border: none;
             display: flex;
             align-items: center;
-            color: #86909c;
-            margin-bottom: 24px;
+            gap: 6px;
         }
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background-color: #e5e6eb;
+        .btn-refresh {
+            background-color: white;
+            color: #4e5969;
+            border: 1px solid #c9cdd4;
         }
-        .divider::before {
-            margin-right: 16px;
+        .btn-logout {
+            background-color: #ff4d4f;
+            color: white;
         }
-        .divider::after {
-            margin-left: 16px;
+        .content {
+            padding: 24px;
         }
-        .admin-link {
-            text-align: center;
-            display: block;
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 16px 24px;
+            text-align: left;
+            border-bottom: 1px solid #e5e6eb;
+        }
+        th {
+            background-color: #f5f7fa;
+            color: #4e5969;
+            font-weight: 500;
+        }
+        td {
+            color: #1d2129;
+        }
+        a {
             color: #165dff;
             text-decoration: none;
-            font-size: 16px;
         }
-        .footer-text {
+        a:hover {
+            text-decoration: underline;
+        }
+        .empty-state {
             text-align: center;
+            padding: 48px;
             color: #86909c;
-            font-size: 14px;
-            margin-top: 32px;
-            line-height: 1.6;
+        }
+        .loading {
+            text-align: center;
+            padding: 48px;
+            color: #165dff;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>信息收集站</h1>
-        <p class="subtitle">请填写以下信息进行提交</p>
-
-        <form id="infoForm">
-            <div class="form-group">
-                <label class="form-label">
-                    <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 64a256 256 0 1 0 0 512 256 256 0 0 0 0-512zm0 448a192 192 0 1 1 0-384 192 192 0 0 1 0 384zm256 320H256c-70.69 0-128-57.31-128-128v-64c0-17.67 14.33-32 32-32h704c17.67 0 32 14.33 32 32v64c0 70.69-57.31 128-128 128z" fill="currentColor"/></svg>
-                    名字
-                </label>
-                <input type="text" class="form-input" id="name" placeholder="请输入您的名字" required>
+    <div class="header">
+        <div class="header-title">
+            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 64a448 448 0 1 0 0 896 448 448 0 0 0 0-896zm0 832a384 384 0 1 1 0-768 384 384 0 0 1 0 768zm-96-384a96 96 0 1 1 192 0 96 96 0 0 1-192 0zm160 96a160 160 0 1 0-320 0c0 52.99 32.71 98.12 79.21 129.21C383.89 729.89 446.66 736 512 736s128.11-6.11 176.79-30.79C727.29 674.12 760 628.99 760 576a160 160 0 0 0-160-160z" fill="currentColor"/></svg>
+            私密管理后台
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-refresh" id="refreshBtn">
+                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M104.704 512c0-226.944 183.36-410.304 410.304-410.304 113.664 0 216.704 44.928 290.816 117.504l-49.664 49.664C699.392 183.808 610.176 144 515.008 144 303.744 144 136 311.744 136 523.008S303.744 902.016 515.008 902.016c166.4 0 309.248-106.496 362.496-256H624v-64h360v360h-64V647.04c-50.688 135.168-188.928 231.168-348.992 231.168-226.944 0-410.304-183.36-410.304-410.304z" fill="currentColor"/></svg>
+                刷新数据
+            </button>
+            <button class="btn btn-logout" id="logoutBtn">
+                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M426.666667 768V256h170.666666v170.666667h213.333333v256H597.333333v170.666667z" fill="currentColor"/></svg>
+                退出登录
+            </button>
+        </div>
+    </div>
+    <div class="content">
+        <div class="table-container">
+            <div class="loading" id="loading">正在加载数据...</div>
+            <table id="dataTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>链接</th>
+                        <th>提交时间</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                暂无提交数据
             </div>
-            <div class="form-group">
-                <label class="form-label">
-                    <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M648 272a160 160 0 0 0-273.17 113.17l-256 256A160 160 0 0 0 433.17 825.17l256-256A160 160 0 0 0 648 272zm-113.17 413.17l-256-256a96 96 0 0 1 135.83-135.83l256 256a96 96 0 0 1-135.83 135.83z" fill="currentColor"/></svg>
-                    链接
-                </label>
-                <input type="url" class="form-input" id="link" placeholder="请输入链接地址" required>
-            </div>
-            <button type="submit" class="submit-btn" id="submitBtn" disabled>提交</button>
-        </form>
-
-        <div class="divider">或</div>
-        <a href="admin.html" class="admin-link">管理员入口</a>
-
-        <div class="footer-text">
-            您的信息将被安全地发送到后台<br>
-            仅管理员可以查看提交的数据
         </div>
     </div>
 
     <script>
-        const nameInput = document.getElementById('name');
-        const linkInput = document.getElementById('link');
-        const submitBtn = document.getElementById('submitBtn');
-        const form = document.getElementById('infoForm');
+        // 替换成你的 SheetDB API 地址
+        const SHEETDB_API = "https://sheetdb.io/api/v1/i0flunpx03cv3";
 
-        function checkInputs() {
-            if (nameInput.value.trim() && linkInput.value.trim()) {
-                submitBtn.disabled = false;
-                submitBtn.classList.add('active');
-            } else {
-                submitBtn.disabled = true;
-                submitBtn.classList.remove('active');
+        // 1. 验证管理员登录状态
+        function checkAdminAuth() {
+            const isLogin = localStorage.getItem('adminLogin');
+            if (!isLogin || isLogin !== 'true') {
+                // 未登录，跳转到登录页
+                window.location.href = 'login.html';
             }
         }
 
-        nameInput.addEventListener('input', checkInputs);
-        linkInput.addEventListener('input', checkInputs);
+        // 2. 从云端加载数据
+        async function loadData() {
+            const loading = document.getElementById('loading');
+            const dataTable = document.getElementById('dataTable');
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = nameInput.value.trim();
-            const link = linkInput.value.trim();
-            const time = new Date().toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            }).replace(/\//g, '-');
+            try {
+                const response = await fetch(SHEETDB_API);
+                const data = await response.json();
 
-            let data = JSON.parse(localStorage.getItem('submissions')) || [];
-            data.push({ name, link, time });
-            localStorage.setItem('submissions', JSON.stringify(data));
+                loading.style.display = 'none';
+                
+                if (data.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
 
-            window.location.href = 'success.html';
-        });
+                // 显示表格并填充数据
+                dataTable.style.display = 'table';
+                tableBody.innerHTML = data.map((item, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.name || '-'}</td>
+                        <td><a href="${item.link || '#'}" target="_blank">${item.link || '-'}</a></td>
+                        <td>${item.time || '-'}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                loading.textContent = '加载失败，点击刷新重试';
+                loading.style.color = '#ff4d4f';
+            }
+        }
+
+        // 3. 退出登录
+        function logout() {
+            localStorage.removeItem('adminLogin');
+            window.location.href = 'login.html';
+        }
+
+        // 初始化
+        checkAdminAuth();
+        loadData();
+
+        // 绑定事件
+        document.getElementById('refreshBtn').addEventListener('click', loadData);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
     </script>
 </body>
 </html>
